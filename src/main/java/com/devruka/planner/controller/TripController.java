@@ -18,6 +18,7 @@ import com.devruka.planner.services.ActivityService;
 import com.devruka.planner.services.LinkService;
 import com.devruka.planner.services.ParticipantsService;
 import com.devruka.planner.services.TripService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +46,7 @@ public class TripController {
     TripService tripService;
 
     @PostMapping
-    public ResponseEntity<CreateTripResponseDTO> createTrip(@RequestBody TripRequestPayload registerDTO){
+    public ResponseEntity<CreateTripResponseDTO> createTrip(@RequestBody @Valid  TripRequestPayload registerDTO){
         Trip newTrip = new Trip(registerDTO);
         try{
             tripService.save(newTrip);
