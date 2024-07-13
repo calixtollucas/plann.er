@@ -150,7 +150,7 @@ public class TripController {
     }
 
     @PostMapping("/{tripId}/links")
-    public ResponseEntity<LinkCreateResponse> registerLink(@PathVariable UUID tripId, @RequestBody LinkRequestPayload payload){
+    public ResponseEntity<LinkCreateResponse> registerLink(@PathVariable UUID tripId, @RequestBody @Valid LinkRequestPayload payload){
         Optional<Trip> trip = this.tripService.getTripById(tripId);
 
         if(trip.isPresent()){
