@@ -24,28 +24,12 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Trip {
 
-    public Trip(TripRequestPayload payload){
-        this.destination = payload.destination();
-        this.isConfirmed = false;
-        this.ownerEmail = payload.owner_email();
-        this.ownerName = payload.owner_name();
-
-        try{
-            this.startsAt = LocalDateTime.parse(payload.starts_at(), DateTimeFormatter.ISO_DATE_TIME);
-            this.endsAt = LocalDateTime.parse(payload.ends_at(), DateTimeFormatter.ISO_DATE_TIME);
-        } catch (DateTimeParseException e){
-            throw new BusinessException(e, "Error while parsing the data string, the string should be in ISO_DATE_TIME", HttpStatus.BAD_REQUEST);
-        }
-
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @NotBlank(message = "destination cannot be empty")
     private String destination;
-
 
     @FutureOrPresent(message = "the start date should be present or future data")
     @Column(name = "starts_at", nullable = false)
@@ -65,4 +49,34 @@ public class Trip {
     @Email(message = "invalid email")
     @Column(name="owner_email", nullable = false)
     private String ownerEmail;
+
+    public Trip(TripRequestPayload payload){
+        this.destination = payload.destination();
+        this.isConfirmed = false;
+        this.ownerEmail = payload.owner_email();
+        this.ownerName = payload.owner_name();
+
+        try{
+            this.startsAt = LocalDateTime.parse(payload.starts_at(), DateTimeFormatter.ISO_DATE_TIME);
+            this.endsAt = LocalDateTime.parse(payload.ends_at(), DateTimeFormatter.ISO_DATE_TIME);
+        } catch (DateTimeParseException e){
+            throw new BusinessException(e, "Error while parsing the data string, the string should be in ISO_DATE_TIME", HttpStatus.BAD_REQUEST);
+        }
+
+        //date Future or Present validation
+        if(this.startsAt.isBefore(LocalDateTime.now())){
+            throw new BusinessException(new IllegalArgumentException(), "The start date should be after today's date", HttpStatus.BAD_REQUEST);
+        }
+        if(this.endsAt.isBefore(LocalDateTime.now())){
+            throw new BusinessException(new IllegalArgumentException(), "The end date should be after today's date", HttpStatus.BAD_REQUEST);
+        }
+
+        //start is equals or before endsAt
+        if(this.startsAt.isAfter(this.endsAt)){
+            throw new BusinessException(new IllegalArgumentException(),
+                    "The start date should be equals or before end date",
+                    HttpStatus.BAD_REQUEST);
+        }
+
+    }
 }

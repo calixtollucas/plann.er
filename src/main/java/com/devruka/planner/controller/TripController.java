@@ -3,11 +3,9 @@ package com.devruka.planner.controller;
 import com.devruka.planner.model.activity.ActivityDTO;
 import com.devruka.planner.model.activity.ActivityRequestPayload;
 import com.devruka.planner.model.activity.ActivityResponse;
-import com.devruka.planner.model.links.Link;
 import com.devruka.planner.model.links.LinkCreateResponse;
 import com.devruka.planner.model.links.LinkRequestPayload;
 import com.devruka.planner.model.links.LinkResponse;
-import com.devruka.planner.model.participant.Participant;
 import com.devruka.planner.model.participant.ParticipantCreateResponse;
 import com.devruka.planner.model.participant.ParticipantDTO;
 import com.devruka.planner.model.participant.ParticipantRequestPayload;
@@ -47,14 +45,11 @@ public class TripController {
 
     @PostMapping
     public ResponseEntity<CreateTripResponseDTO> createTrip(@RequestBody @Valid  TripRequestPayload registerDTO){
+        @Valid
         Trip newTrip = new Trip(registerDTO);
-        try{
             tripService.save(newTrip);
             participantsService.registerParticipantsToEvent(registerDTO.emails_to_invite(), newTrip);
             return ResponseEntity.ok(new CreateTripResponseDTO(newTrip.getId()));
-        } catch (RuntimeException e){
-            return ResponseEntity.badRequest().build();
-        }
     }
 
     @GetMapping("/{tripId}")
