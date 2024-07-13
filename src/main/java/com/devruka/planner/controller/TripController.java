@@ -95,7 +95,7 @@ public class TripController {
     }
 
     @PostMapping("/{tripId}/activities")
-    public ResponseEntity<ActivityResponse> registerActivity(@PathVariable UUID tripId, @RequestBody ActivityRequestPayload payload){
+    public ResponseEntity<ActivityResponse> registerActivity(@PathVariable UUID tripId, @RequestBody @Valid ActivityRequestPayload payload){
         Optional<Trip> trip = tripService.getTripById(tripId);
 
         if(trip.isPresent()){
@@ -120,7 +120,7 @@ public class TripController {
     }
 
     @PostMapping("/{tripId}/invite")
-    public ResponseEntity<ParticipantCreateResponse> inviteParticipant(@PathVariable UUID tripId, @RequestBody ParticipantRequestPayload payload){
+    public ResponseEntity<ParticipantCreateResponse> inviteParticipant(@PathVariable UUID tripId, @RequestBody @Valid ParticipantRequestPayload payload){
         Optional<Trip> trip = tripService.getTripById(tripId);
 
         if(trip.isPresent()){
